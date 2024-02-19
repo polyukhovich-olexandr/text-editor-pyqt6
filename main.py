@@ -29,6 +29,11 @@ text = QPlainTextEdit()
 window = MainWindow()
 window.setCentralWidget(text)
 
+file_path = None
+
+menu = window.menuBar().addMenu("&File")
+open_action = QAction("&Open")
+
 
 def open_file():
     global file_path
@@ -36,6 +41,13 @@ def open_file():
     if path:
         text.setPlainText(open(path).read())
         file_path = path
+
+
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.StandardKey.Open)
+menu.addAction(open_action)
+
+save_action = QAction("&Save")
 
 
 def save():
@@ -47,12 +59,31 @@ def save():
         text.document().setModified(False)
 
 
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.StandardKey.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction("Save &As...")
+
+
 def save_as():
     global file_path
     path = QFileDialog.getSaveFileName(window, "Save As")[0]
     if path:
         file_path = path
         save()
+
+
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction("&Close")
+close.triggered.connect(window.close)
+menu.addAction(close)
+
+help_menu = window.menuBar().addMenu("&Help")
+about_action = QAction("&About")
+help_menu.addAction(about_action)
 
 
 def show_about_dialog():
@@ -66,3 +97,9 @@ def show_about_dialog():
         "Copyright &copy; Company Inc.</p>"
     )
     QMessageBox.about(window, "About Text Editor", text)
+
+
+about_action.triggered.connect(show_about_dialog)
+
+window.show()
+app.exec()
