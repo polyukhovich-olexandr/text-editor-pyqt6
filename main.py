@@ -27,3 +27,42 @@ app = QApplication([])
 app.setApplicationName("Text Editor")
 text = QPlainTextEdit()
 window = MainWindow()
+window.setCentralWidget(text)
+
+
+def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, "Open")[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+
+
+def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, "w") as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+
+
+def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, "Save As")[0]
+    if path:
+        file_path = path
+        save()
+
+
+def show_about_dialog():
+    text = (
+        "<center>"
+        "<h1>Text Editor</h1>"
+        "&#8291;"
+        "<img src=icon.svg>"
+        "</center>"
+        "<p>Version 31.4.159.265358<br/>"
+        "Copyright &copy; Company Inc.</p>"
+    )
+    QMessageBox.about(window, "About Text Editor", text)
